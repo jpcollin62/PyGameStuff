@@ -17,9 +17,23 @@ player = PlayerObject.Player()
 player.rect.left = 450
 player.rect.top = 600
 
+#makes enemies and appends them to the list of enemies
+tempEnemy = EnemyObject.Enemy(0,0, 200,100, enemies)#creates an enemy an appends it to the list
+
+tempEnemy = EnemyObject.Enemy(5,0, 300,0, enemies)
+
+tempEnemy = EnemyObject.Enemy(3,0, 69, 400, enemies)
+
+
 while True:
+    #makes sprites appear
     surface.fill((0,0,0))
+
     surface.blit(player.image, player.rect)
+
+    for i in range (len(enemies)):#makes enemies appear and move
+        enemies[i].appear(surface)
+        enemies[i].movement(WINDOW_WIDTH, WINDOW_HEIGHT)
 
     player.LRMovement(WINDOW_WIDTH, WINDOW_HEIGHT)
     
@@ -30,15 +44,18 @@ while True:
         if projectile != False:
             projectileList.append(projectile)
 
+    #removes projectiles if they leave the screen
     if len(projectileList)>0:
-        print (projectileList)
         if projectileList[0].rect.bottom<=0:
             projectileList.pop(0)
 
+    #moves the projectiles
     if len(projectileList) > 0:
         for i in range (len(projectileList)):
             projectileList[i].move()
 
+            #Checks if projectiles hit enemy
+            projectileList[i].checkHit(enemies)
         
 
 

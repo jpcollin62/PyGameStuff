@@ -19,20 +19,6 @@ while True:
     
     player.rect.left += x
     player.rect.top +=y
-
-    '''if playerRect.right >= WINDOW_WIDTH:
-        X_MOVE_AMT = -X_MOVE_AMT
-        counter += 1
-    if playerRect.left <= 0:
-        counter += 1
-        X_MOVE_AMT = -X_MOVE_AMT
-
-    if playerRect.top <= 0:
-        Y_MOVE_AMT = -Y_MOVE_AMT
-
-    if playerRect.bottom >= WINDOW_HEIGHT:
-        Y_MOVE_AMT = -Y_MOVE_AMT'''
-
     
     surface.blit(player.image, player.rect)
     pygame.display.update()
