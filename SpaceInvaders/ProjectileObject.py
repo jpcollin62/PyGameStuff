@@ -24,4 +24,9 @@ class Projectile(object):
         self.drawProjectile()
 
     
-        
+    def checkHit(self, enemyList):
+        if len(enemyList) > 0:
+            for i in range (len(enemyList)):
+                if self.rect.colliderect(enemyList[i].rect):
+                    enemyList[i].die()
+                
