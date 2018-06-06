@@ -1,5 +1,19 @@
 import pygame, time, Baddie, background, os
 
+def backDrop():
+    screen.blit(background.image, background.rect)
+    screen.blit(scoreTitle,(0,0))
+    screen.blit(scorePrint, (10,50))
+    screen.blit(livesTitle, (0, 900))
+    screen.blit(livesPrint, (175, 900))
+    screen.blit(levelTitle, (window_width-200, 0))
+    screen.blit(levelPrint, (window_width-150, 50))
+    surface.blit(enemy.image, (enemy.x, enemy.y))
+
+
+
+
+
 pygame.init()
 
 
@@ -46,13 +60,7 @@ x_move_amt = 80
 myBaddies = []
 
 while True:
-    screen.blit(background.image, background.rect)
-    screen.blit(scoreTitle,(0,0))
-    screen.blit(scorePrint, (10,50))
-    screen.blit(livesTitle, (0, 900))
-    screen.blit(livesPrint, (175, 900))
-    screen.blit(levelTitle, (window_width-200, 0))
-    screen.blit(levelPrint, (window_width-150, 50))
+
     for x in range (0,7):
         pos = x*200
         myBaddies.append(Baddie.Baddie(pos,100))
@@ -60,21 +68,14 @@ while True:
         #surface.blit(Baddie.Baddie(pos,100).image, (Baddie.Baddie.getX(), Baddie.Baddie.getY()))
     
     for enemy in myBaddies:
-
-        enemy.moveChar()
-        screen.blit(background.image, background.rect)
-        screen.blit(scoreTitle,(0,0))
-        screen.blit(scorePrint, (10,50))
-        screen.blit(livesTitle, (0, 900))
-        screen.blit(livesPrint, (175, 900))
-        screen.blit(levelTitle, (window_width-200, 0))
-        screen.blit(levelPrint, (window_width-150, 50))
-        surface.blit(enemy.image, (enemy.x, enemy.y))  
-        pygame.display.update()
-        time.sleep(1)
+        if len(myBaddies) > 0:
+            enemy.moveChar()
+            backDrop()
+            pygame.display.update()
+            pygame.time.wait(100)
 
 
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            os._exit(1)
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    os._exit(1)
