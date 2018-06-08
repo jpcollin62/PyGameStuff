@@ -6,11 +6,17 @@ class Baddie(object):
     ''' Class for baddie enemy '''
     def __init__(self,startX,startY,xMovAmnt=50):
         ''' Initiates the Baddie character '''
+        '''
         self.x = startX
         self.y = startY
+        '''
+
+        
         self.xMovAmnt = xMovAmnt
         self.image = baddieImage
         self.rect = self.image.get_rect()
+        self.rect.left = startX
+        self.rect.top = startY
         
     def getX(self):
         return self.x
@@ -20,7 +26,7 @@ class Baddie(object):
         return self.y
         
     def moveChar(self):
-        self.x += self.xMovAmnt
+        self.rect.left += self.xMovAmnt
         
         
     def __str__(self):
