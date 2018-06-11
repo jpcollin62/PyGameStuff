@@ -1,4 +1,4 @@
-import pygame
+import pygame, time
 
 class Projectile(object):
 
@@ -10,6 +10,8 @@ class Projectile(object):
         self.y = y
         self.rect = pygame.Rect(self.x-2.5, self.y-16, 5, 16)
         self.drawProjectile()
+
+        
         
 
     def drawProjectile(self):
@@ -20,13 +22,22 @@ class Projectile(object):
 
     def move(self):
         
-        self.rect.top += -3
+        self.rect.top += -15
         self.drawProjectile()
 
     
-    def checkHit(self, enemyList):
+    def checkHit(self, enemyList, projectileList):
+        deadEnemies = []
         if len(enemyList) > 0:
             for i in range (len(enemyList)):
                 if self.rect.colliderect(enemyList[i].rect):
-                    enemyList[i].die()
+                    enemyList.remove(enemyList[i])
+                    return True
+
+        return False
+
+    def killBullet(self, projectileList):
+        projectileList.remove(self)
+        shotKill = time.time()
+        return shotKill
                 

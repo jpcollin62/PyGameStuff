@@ -1,4 +1,4 @@
-import pygame
+import pygame, time
 
 class Enemy(object):
 
@@ -26,6 +26,9 @@ class Enemy(object):
         self.setMove = 30
         self.startLeft = startLeft
         self.startTop = startTop
+
+        #Saves the current time
+        self.lastMove = (time.time())
 
         #appends it to the list of enemies
         enemyList.append(self)
@@ -63,6 +66,7 @@ class Enemy(object):
 
     def invaderMovement(self):
         self.LRMove()
+        self.lastMove = time.time()
         
 
     def moveDown(self):

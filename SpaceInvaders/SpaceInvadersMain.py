@@ -1,4 +1,4 @@
-import pygame, os,random, PlayerObject, EnemyObject, ItemObject, ProjectileObject, background
+import pygame, os, time, random, PlayerObject, EnemyObject, ItemObject, ProjectileObject, background
 
 def backDrop():
     surface.blit(background.image, background.rect)
@@ -12,23 +12,32 @@ def backDrop():
 def allMove(enemyList):
     oneHit = False
     if len(enemyList) > 0:
+        if time.time() - enemyList[0].lastMove >= 2:
 
-        
-        for i in range (0, len(enemyList)):
-            enemyList[i].invaderMovement()
-            backDrop()
-            for x in range (0, len(enemyList)):
-                surface.blit(enemyList[x].image, enemyList[x].rect)
-
-
-        for i in range (len(enemyList)):
-            if enemyList[i].checkMove(WINDOW_WIDTH, WINDOW_HEIGHT):
-                oneHit = True
-                break
-
-        if oneHit == True:
+            '''
             for i in range (0, len(enemyList)):
-                enemyList[i].moveDown()
+                enemyList[i].invaderMovement()
+                backDrop()
+                for x in range (0, len(enemyList)):
+                    surface.blit(enemyList[i].image, enemyList[i].rect)
+            '''
+            for i in range (0, len(enemyList)):
+                enemyList[i].invaderMovement()
+
+            backDrop()
+            for i in range (0, len(enemyList)):
+                surface.blit(enemyList[i].image, enemyList[i].rect)
+            
+
+
+            for i in range (len(enemyList)):
+                if enemyList[i].checkMove(WINDOW_WIDTH, WINDOW_HEIGHT):
+                    oneHit = True
+                    break
+
+            if oneHit == True:
+                for i in range (0, len(enemyList)):
+                    enemyList[i].moveDown()
 
 
 
@@ -47,6 +56,7 @@ enemies = []
 items = []
 startItems = []
 projectileList = []
+shotGone = 1#variable for when the last shot was fired
 
 
 background = background.Background("simpleback.jpeg", (0,0),WINDOW_WIDTH, WINDOW_HEIGHT)
@@ -76,6 +86,8 @@ for i in range(8):
 
 while True:
     backDrop()
+    #moves all enemies
+    allMove(enemies)
 
     surface.blit(player.image, player.rect)
 
@@ -87,7 +99,7 @@ while True:
     
     #moves player
     pressed = pygame.key.get_pressed()
-    if pressed[pygame.K_SPACE]:
+    if pressed[pygame.K_SPACE] and time.time() - shotGone >= 0.5: #leaves a gap before the enxt shot can be fired
         projectile= player.shoot(surface, projectileList)
         if projectile != False:
             projectileList.append(projectile)
@@ -95,22 +107,20 @@ while True:
     #removes projectiles if they leave the screen
     if len(projectileList)>0:
         if projectileList[0].rect.bottom<=0:
-            projectileList.pop(0)
+            shotGone = projectileList[0].killBullet(projectileList)
 
-    #moves the projectiles
+    #moves the projectiles and checks if the projectile hits the enemies
     if len(projectileList) > 0:
         for i in range (len(projectileList)):
             projectileList[i].move()
 
             #Checks if projectiles hit enemy
-            projectileList[i].checkHit(enemies)
-
-    #moves all enemies
-    allMove(enemies)
-        
+            collisionStatus = projectileList[i].checkHit(enemies, projectileList)#removes the projectile and saves the time that it hit the enemy
+            if collisionStatus:
+                shotGone = projectileList[i].killBullet(projectileList)
 
 
-    pygame.time.wait(10)
+    #pygame.time.wait(1)
     pygame.display.update()
     
 
