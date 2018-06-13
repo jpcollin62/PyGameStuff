@@ -1,26 +1,28 @@
 import pygame, os, time, random, PlayerObject, EnemyObject, ItemObject, ProjectileObject, background
 
 def backDrop():
+    livesTitle = myfont.render("Lives", False, (255,255,255))
+    livesPrint = myfont.render(str(lives), False, (255,255,255))
+
+    scoreTitle = myfont.render("Score", False, (255,255,255))
+    scorePrint = myfont.render(str(score), False, (255,255,255))
+
+    levelTitle = myfont.render("Level", False, (255,255,255))
+    levelPrint = myfont.render(str(level), False, (255,255,255))
+
+    
     surface.blit(background.image, background.rect)
     surface.blit(scoreTitle,(0,0))
     surface.blit(scorePrint, (10,50))
-    surface.blit(livesTitle, (0, 600))
-    surface.blit(livesPrint, (175, 600))
+    surface.blit(livesTitle, (0, 850))
+    surface.blit(livesPrint, (175, 850))
     surface.blit(levelTitle, (WINDOW_WIDTH-200, 0))
     surface.blit(levelPrint, (WINDOW_WIDTH-150, 50))
 
 def allMove(enemyList):
     oneHit = False
     if len(enemyList) > 0:
-        if time.time() - enemyList[0].lastMove >= 2:
-
-            '''
-            for i in range (0, len(enemyList)):
-                enemyList[i].invaderMovement()
-                backDrop()
-                for x in range (0, len(enemyList)):
-                    surface.blit(enemyList[i].image, enemyList[i].rect)
-            '''
+        if time.time() - enemyList[0].lastMove >= 0.3:
             for i in range (0, len(enemyList)):
                 enemyList[i].invaderMovement()
 
@@ -45,11 +47,8 @@ os.environ['SDL_VIDEO_CENTERED'] = '1'#centres the window
 pygame.init()
 
 
-
-
-
-WINDOW_WIDTH = 1280
-WINDOW_HEIGHT = 720
+WINDOW_WIDTH = 1000
+WINDOW_HEIGHT = 900
 surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT),0,32)
 pygame.display.set_caption("Space Invaders")
 enemies = []
@@ -63,25 +62,27 @@ background = background.Background("simpleback.jpeg", (0,0),WINDOW_WIDTH, WINDOW
 pygame.font.init()
 myfont = pygame.font.SysFont("Courier New", 50)
 level = 3
-score = 250
+score = 0
 lives = 5
-livesTitle = myfont.render("Lives", False, (255,255,255))
-livesPrint = myfont.render(str(lives), False, (255,255,255))
-
-scoreTitle = myfont.render("Score", False, (255,255,255))
-scorePrint = myfont.render(str(score), False, (255,255,255))
-
-levelTitle = myfont.render("Level", False, (255,255,255))
-levelPrint = myfont.render(str(level), False, (255,255,255))
 
 #makes player
 player = PlayerObject.Player()
 player.rect.left = 450
-player.rect.top = 600
+player.rect.top = 800
 
 #makes enemies and appends them to the list of enemies
-for i in range(8):
-    tempEnemy = EnemyObject.Enemy(0,0, i*75 + 31, 100, enemies)
+for x in range (1,6):
+    for i in range(11):
+        tempEnemy = EnemyObject.Enemy(0,0, i*75 + 31, x*50, enemies)
+
+    '''for i in range (8):
+        tempEnemy = EnemyObject.Enemy(0,0, i*75 + 31, 150, enemies)
+        '''
+
+
+
+
+
 
 
 while True:
@@ -99,10 +100,11 @@ while True:
     
     #moves player
     pressed = pygame.key.get_pressed()
-    if pressed[pygame.K_SPACE] and time.time() - shotGone >= 0.5: #leaves a gap before the enxt shot can be fired
+    if pressed[pygame.K_SPACE] and time.time() - shotGone >= 0.1: #leaves a gap before the enxt shot can be fired
         projectile= player.shoot(surface, projectileList)
         if projectile != False:
             projectileList.append(projectile)
+
 
     #removes projectiles if they leave the screen
     if len(projectileList)>0:
@@ -117,6 +119,7 @@ while True:
             #Checks if projectiles hit enemy
             collisionStatus = projectileList[i].checkHit(enemies, projectileList)#removes the projectile and saves the time that it hit the enemy
             if collisionStatus:
+                score += 50
                 shotGone = projectileList[i].killBullet(projectileList)
 
 

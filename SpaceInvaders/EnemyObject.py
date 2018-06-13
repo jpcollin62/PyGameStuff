@@ -5,7 +5,7 @@ class Enemy(object):
     def __init__(self, xMove, yMove, startLeft, startTop, enemyList,status = "alive"):
         #loads the images and the rect
         enemyImage = pygame.image.load("Enemy2.png")
-        enemyImage = pygame.transform.scale(enemyImage, (30,30))
+        enemyImage = pygame.transform.scale(enemyImage, (50,30))
         enemyRect = enemyImage.get_rect()
 
         self.image = enemyImage
@@ -23,7 +23,7 @@ class Enemy(object):
         #remembers the beginning position and speed of the enemy
         self.startxMove = xMove
         self.startyMove = yMove
-        self.setMove = 30
+        self.setMove = 20
         self.startLeft = startLeft
         self.startTop = startTop
 
@@ -53,10 +53,10 @@ class Enemy(object):
 
 
     def checkMove(self, windowWidth, windowHeight):
-        if self.rect.right + self.setMove >= windowWidth-40:
+        if self.rect.right + self.setMove >= windowWidth-20:
             return True
 
-        elif self.rect.left + self.setMove < 30:
+        elif self.rect.left + self.setMove < 20:
             return True
 
         else:
