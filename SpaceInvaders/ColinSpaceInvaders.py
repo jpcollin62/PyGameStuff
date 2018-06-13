@@ -8,14 +8,12 @@ def backDrop():
     screen.blit(livesPrint, (175, 900))
     screen.blit(levelTitle, (window_width-200, 0))
     screen.blit(levelPrint, (window_width-150, 50))
-    surface.blit(enemy.image, (enemy.x, enemy.y))
 
 
 
 
 
 pygame.init()
-
 
 os.environ["SDL_VIDEO_CENTERED"] = "1"
 pygame.font.init()
