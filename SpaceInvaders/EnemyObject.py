@@ -1,11 +1,11 @@
-import pygame
+import pygame, time
 
 class Enemy(object):
 
     def __init__(self, xMove, yMove, startLeft, startTop, enemyList,status = "alive"):
         #loads the images and the rect
-        enemyImage = pygame.image.load("robotEnemy.png")
-        enemyImage = pygame.transform.scale(enemyImage, (100,100))
+        enemyImage = pygame.image.load("Enemy2.png")
+        enemyImage = pygame.transform.scale(enemyImage, (50,30))
         enemyRect = enemyImage.get_rect()
 
         self.image = enemyImage
@@ -23,13 +23,18 @@ class Enemy(object):
         #remembers the beginning position and speed of the enemy
         self.startxMove = xMove
         self.startyMove = yMove
+        self.setMove = 20
         self.startLeft = startLeft
         self.startTop = startTop
+
+        #Saves the current time
+        self.lastMove = (time.time())
 
         #appends it to the list of enemies
         enemyList.append(self)
 
     def movement(self, windowWidth, windowHeight):
+        '''Free enemy movement'''
         if self.rect.right >= windowWidth:
             self.xMove = -self.xMove
         if self.rect.left <= 0:
@@ -42,7 +47,34 @@ class Enemy(object):
 
         self.rect.left += self.xMove
         self.rect.top += self.yMove
-            
+
+    def LRMove(self):
+        self.rect.left += self.setMove
+
+
+    def checkMove(self, windowWidth, windowHeight):
+        if self.rect.right + self.setMove >= windowWidth-20:
+            return True
+
+        elif self.rect.left + self.setMove < 20:
+            return True
+
+        else:
+            return False
+
+
+
+    def invaderMovement(self):
+        self.LRMove()
+        self.lastMove = time.time()
+        
+
+    def moveDown(self):
+        self.setMove = -self.setMove
+
+        self.rect.top += 30
+
+        
 
     def die(self):
         self.status = "dead"

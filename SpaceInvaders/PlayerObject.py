@@ -54,9 +54,4 @@ class Player(object):
         if len(projectileList) == 0:#prints the first projectile on the screen
             projectile = ProjectileObject.Projectile(surface, self.rect.centerx, self.rect.top)
             return projectile
-        
-        if len(projectileList) < 3:#There are less than three projectiles in the list, so make a new proejctile
-            if projectileList[len(projectileList)-1].rect.bottom <= self.rect.top-40: 
-                projectile = ProjectileObject.Projectile(surface, self.rect.centerx, self.rect.top)
-                return projectile
         return False
