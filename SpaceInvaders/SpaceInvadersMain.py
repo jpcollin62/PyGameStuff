@@ -4,23 +4,29 @@ def outputDirect():
     screen.blit(directions, (200,200))
 
 def loop_play():
+    '''Loops the music track with threading '''
     is_playing = True
     start = True
     pygame.mixer.music.load("PaydayMusic.mp3")
+    #While loop for music
     while is_playing:
         pygame.mixer.music.play()
         pygame.time.wait(194800)
         
 def press_button_play():
+    ''' Chesck tos see if the music is playing '''
     global is_playing
     global my_thread
 
     if not is_playing:
         is_playing = True
-        my_thread = threading.Thread(target=loop_play)
+        #Uses threading to play the music over the game
+        my_thread = threading.Thread(target=loop_play) 
         my_thread.start()
     
 def backDrop():
+    '''Creates the backdrop of the interface '''
+    #Generates the string for the hud
     livesTitle = myfont.render("Lives", False, (255,255,255))
     livesPrint = myfont.render(str(lives), False, (255,255,255))
 
@@ -30,7 +36,7 @@ def backDrop():
     levelTitle = myfont.render("Level", False, (255,255,255))
     levelPrint = myfont.render(str(level), False, (255,255,255))
 
-    
+    #Blits the string data onto the screen
     surface.blit(background.image, background.rect)
     surface.blit(scoreTitle,(0,0))
     surface.blit(scorePrint, (10,50))
@@ -40,27 +46,29 @@ def backDrop():
     surface.blit(levelPrint, (WINDOW_WIDTH-150, 50))
 
 def allMove(enemyList):
+    '''Moves all of the enemies in a certain pattern, checks for collision '''
     oneHit = False
+    #while there are enemies on the screen
     if len(enemyList) > 0:
+        #If it is within the time gap
         if time.time() - enemyList[0].lastMove >= 0.3:
+            #Causes the enemy to move
             for i in range (0, len(enemyList)):
                 enemyList[i].invaderMovement()
-
+        
             backDrop()
             for i in range (0, len(enemyList)):
                 surface.blit(enemyList[i].image, enemyList[i].rect)
             
 
-
             for i in range (len(enemyList)):
                 if enemyList[i].checkMove(WINDOW_WIDTH, WINDOW_HEIGHT):
                     oneHit = True
                     break
-
+            #If the checkmove is true moves the enemies down
             if oneHit == True:
                 for i in range (0, len(enemyList)):
                     enemyList[i].moveDown()
-
 
 
 os.environ['SDL_VIDEO_CENTERED'] = '1'#centres the window
@@ -69,17 +77,18 @@ pygame.init()
 pygame.mixer.init()
 is_playing = False
 
+#Calls the parameters
 
 WINDOW_WIDTH = 1000
 WINDOW_HEIGHT = 900
 
-
+#Initiates background for title screen
 backgroundTitle = background.Background("TitleBack.jpg", (0,0),WINDOW_WIDTH, WINDOW_HEIGHT)
 baddieImage = pygame.image.load("Enemy2.png")
 baddieImage = pygame.transform.scale(baddieImage, (300,300))
 baddieImagechange = pygame.image.load("Enemy2change.png")
 baddieImagechange = pygame.transform.scale(baddieImagechange, (300,300))
-
+#Calls surface
 surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT),0,32)
 pygame.display.set_caption("Space Invaders")
 enemies = []
@@ -88,7 +97,7 @@ startItems = []
 projectileList = []
 shotGone = 1#variable for when the last shot was fired
 
-
+#Initializes the background for the game
 background = background.Background("simpleback.jpeg", (0,0),WINDOW_WIDTH, WINDOW_HEIGHT)
 pygame.font.init()
 myfont = pygame.font.SysFont("Courier New", 50)
@@ -102,7 +111,7 @@ player.rect.left = 450
 player.rect.top = 800
 
 
-
+#Sets string for the title
 title = myfont.render("SPACE INVADERS", False, (255,255,255))
 directions = myfont.render("<Press Space to Start>", False,(255,255,255))
 
@@ -114,29 +123,30 @@ while titleOn == True:
         press_button_play()
     screen.fill([0,0,0])
     screen.blit(backgroundTitle.image, backgroundTitle.rect)
+    #Causes the click to start to flash
     if directOn == True:
-        outputDirect()
+        outputDirect() #Outputs the title strings
         screen.blit(baddieImage, (100,400))
-        directOn = False
+        directOn = False #Causes the words to flash
     elif directOn == False:
         screen.blit(baddieImagechange, (100,400))
         directOn = True
     screen.blit(title, (430, 560))
     pygame.time.wait(500)
-    
+    #When the space key is pressed, starts the game
     for event in pygame.event.get():
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
                 screen.blit(goodLuckOut, (WINDOW_WIDTH-500, WINDOW_HEIGHT-200))
                 titleOn = False
                 break
+
+        #If the user clicks on the exit button
         elif event.type == pygame.QUIT:
             pygame.quit()
             os._exit(1)
 
     pygame.display.update()
-
-
 
 
 #makes enemies and appends them to the list of enemies
@@ -149,13 +159,10 @@ for x in range (1,6):
         '''
 
 
-
-
-
-
-
 while True:
     backDrop()
+    if is_playing == False:
+        press_button_play()
     #moves all enemies
     allMove(enemies)
 
