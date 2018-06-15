@@ -231,7 +231,7 @@ while running:
     if len(enemyProjectileRemove) > 0:
         for i in range (len(enemyProjectileRemove)):
             enemyProjectiles.pop(enemyProjectileRemove[i])
-        enemyProjectileRemove = []
+        enemyProjectileRemove = []#makes the list empty
 
     print (len(enemyProjectiles))
     
