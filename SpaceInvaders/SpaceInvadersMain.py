@@ -41,11 +41,19 @@ def backDrop():
 
 def allMove(enemyList):
     oneHit = False
+    playerDead = False
     if len(enemyList) > 0:
-        if time.time() - enemyList[0].lastMove >= 0.3:
+        if time.time() - enemyList[0].lastMove >= 0.3:#moves the enemies every 0.3 secs
             for i in range (0, len(enemyList)):
                 enemyList[i].invaderMovement()
 
+            for i in range (len(enemyList)): #gives the chance for enemies to shoot
+                enemyBullet = enemyList[i].shootChance()
+                if enemyBullet == False:
+                    pass
+                else:
+                    enemyProjectiles.append(enemyBullet)
+                
             backDrop()
             for i in range (0, len(enemyList)):
                 surface.blit(enemyList[i].image, enemyList[i].rect)
@@ -60,6 +68,30 @@ def allMove(enemyList):
             if oneHit == True:
                 for i in range (0, len(enemyList)):
                     enemyList[i].moveDown()
+                    if enemyList[i].rect.bottom >= player.rect.top:#checks if the enemies reached the player
+                        return True
+                return False
+
+
+def spawnEnemies():
+    '''makes enemies and appends them to the list of enemies'''
+    for x in range (1,6):
+        for i in range(11):
+            tempEnemy = EnemyObject.Enemy(0,0, i*75 + 31, x*50, enemies, surface)
+
+def reset():
+    '''respawns all enemies and decreases the user's lives when the get killed'''
+    global lives, enemies
+    
+    enemies = []
+    projectileList = []
+    player.rect.left = 450
+    player.rect.top = 800
+    lives = lives -1
+    spawnEnemies()
+    
+                        
+                
 
 
 
@@ -86,16 +118,21 @@ enemies = []
 items = []
 startItems = []
 projectileList = []
+enemyProjectiles = []
+enemyProjectileRemove = []
 shotGone = 1#variable for when the last shot was fired
+playerDead = False#variable for when the invaders have reached the bottom
+running = True
 
 
 background = background.Background("simpleback.jpeg", (0,0),WINDOW_WIDTH, WINDOW_HEIGHT)
 pygame.font.init()
 myfont = pygame.font.SysFont("Courier New", 50)
-level = 3
+level = 0
 score = 0
-lives = 5
+lives = 3
 goodLuckOut = myfont.render("Good Luck!", False, (255,255,255))
+
 #makes player
 player = PlayerObject.Player()
 player.rect.left = 450
@@ -139,25 +176,18 @@ while titleOn == True:
 
 
 
-#makes enemies and appends them to the list of enemies
-for x in range (1,6):
-    for i in range(11):
-        tempEnemy = EnemyObject.Enemy(0,0, i*75 + 31, x*50, enemies)
 
-    '''for i in range (8):
-        tempEnemy = EnemyObject.Enemy(0,0, i*75 + 31, 150, enemies)
-        '''
+spawnEnemies()
 
+pygame.time.wait(500)
 
-
-
-
-
-
-while True:
+while running:      
     backDrop()
     #moves all enemies
-    allMove(enemies)
+    playerDead = allMove(enemies)
+
+    if playerDead == True:
+        reset()
 
     surface.blit(player.image, player.rect)
 
@@ -190,8 +220,21 @@ while True:
             if collisionStatus:
                 score += 50
                 shotGone = projectileList[i].killBullet(projectileList)
+    #moves enemy projectiles
+    if len(enemyProjectiles) > 0:
+        for i in range (len(enemyProjectiles)):
+            enemyProjectiles[i].enemyBulletMove()
+            if enemyProjectiles[i].rect.bottom >= WINDOW_HEIGHT:
+                enemyProjectileRemove.append(i)#adds the projectile to the list of projectiles to be removed
 
+    #removes projectiles
+    if len(enemyProjectileRemove) > 0:
+        for i in range (len(enemyProjectileRemove)):
+            enemyProjectiles.pop(enemyProjectileRemove[i])
+        enemyProjectileRemove = []
 
+    print (len(enemyProjectiles))
+    
     #pygame.time.wait(1)
     pygame.display.update()
     

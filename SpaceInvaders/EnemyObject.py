@@ -1,8 +1,8 @@
-import pygame, time
+import pygame, time, random, ProjectileObject
 
 class Enemy(object):
 
-    def __init__(self, xMove, yMove, startLeft, startTop, enemyList,status = "alive"):
+    def __init__(self, xMove, yMove, startLeft, startTop, enemyList, surface, status = "alive"):
         #loads the images and the rect
         enemyImage = pygame.image.load("Enemy2.png")
         enemyImage = pygame.transform.scale(enemyImage, (50,30))
@@ -10,6 +10,8 @@ class Enemy(object):
 
         self.image = enemyImage
         self.rect = enemyRect
+
+        self.surface = surface
 
         #makes it appear at the desired location
         self.rect.left = startLeft
@@ -85,6 +87,14 @@ class Enemy(object):
 
         if self.status == "dead":
             pass
+
+    def shootChance(self):
+        chance = random.randint(0, 80)
+        if chance == 0:
+            projectile = ProjectileObject.Projectile(self.surface, self.rect.centerx, self.rect.bottom, False)
+            return projectile
+        else:
+            return False
 
     def restart(self):
         self.rect.left = self.startLeft
