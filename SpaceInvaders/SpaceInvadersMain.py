@@ -174,7 +174,7 @@ while True:
 
     player.LRMovement(WINDOW_WIDTH, WINDOW_HEIGHT)
     
-    #moves player
+    #moves the player
     pressed = pygame.key.get_pressed()
     if pressed[pygame.K_SPACE] and time.time() - shotGone >= 0.1: #leaves a gap before the enxt shot can be fired
         projectile= player.shoot(surface, projectileList)
