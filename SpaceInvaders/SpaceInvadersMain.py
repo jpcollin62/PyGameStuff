@@ -1,4 +1,5 @@
 import pygame, os, time, random, PlayerObject, EnemyObject, ItemObject, ProjectileObject, background, threading
+#Begins functions
 def outputDirect():
     ''' Outputs the click space start line '''
     screen.blit(directions, (200,200))
@@ -118,6 +119,10 @@ directions = myfont.render("<Press Space to Start>", False,(255,255,255))
 directOn = True
 screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 titleOn = True
+
+### MainLine ###
+
+
 while titleOn == True:
     if is_playing == False:
         press_button_play()
@@ -153,11 +158,6 @@ while titleOn == True:
 for x in range (1,6):
     for i in range(11):
         tempEnemy = EnemyObject.Enemy(0,0, i*75 + 31, x*50, enemies)
-
-    '''for i in range (8):
-        tempEnemy = EnemyObject.Enemy(0,0, i*75 + 31, 150, enemies)
-        '''
-
 
 while True:
     backDrop()
