@@ -19,7 +19,10 @@ pygame.font.init()
 myfont = pygame.font.SysFont("Courier New", 50)
 gameOverText = myfont.render("Game Over " +" " +"Git Gud", False, (255,255,255))
 screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT),0,32)
+pygame.mixer.music.load("gameoverbad.mp3")
+pygame.mixer.music.play()
 #Loops The game over screen
+
 while True:
     #Outputs the screen overlay
     screen.fill([0,0,0])
