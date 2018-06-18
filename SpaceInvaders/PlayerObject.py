@@ -31,7 +31,7 @@ class Player(object):
         self.rect.top += y
 
     def LRMovement(self, windowWidth, windowHeight):#decide between the enemy or player method of moving (self.xMove?)
-        '''how the player moves'''
+        '''how the player moves in space invaders'''
         x = 0
         
 
@@ -44,6 +44,7 @@ class Player(object):
         self.rect.left += x
 
     def collisionCheck (self, obj):
+        '''checks if the player hits the enemy'''
         if self.rect.colliderect(obj.rect):
             return True
 
@@ -51,6 +52,7 @@ class Player(object):
             return False
 
     def shoot(self, surface, projectileList):
+        '''shoots the projectile'''
         if len(projectileList) == 0:#prints the first projectile on the screen
             projectile = ProjectileObject.Projectile(surface, self.rect.centerx, self.rect.top)
             return projectile

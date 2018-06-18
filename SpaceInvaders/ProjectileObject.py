@@ -24,17 +24,20 @@ class Projectile(object):
         pygame.draw.rect(self.surface, (250, 100, 100), self.rect)
         
     def move(self):
+        '''moves the bullet'''
         
         self.rect.top += -15
         self.drawProjectile()
 
     def enemyBulletMove(self):
+        '''moves the enemy bullet'''
 
         self.rect.top += 8
         self.drawEnemyProjectile()
 
     
     def checkHit(self, enemyList, projectileList):
+        '''checks if the projectile hits enemies'''
         deadEnemies = []
         if len(enemyList) > 0:
             for i in range (len(enemyList)):
@@ -45,11 +48,13 @@ class Projectile(object):
         return False
 
     def checkPlayerHit(self, plyr, enemyProjectiles):
+        '''checks if enemy projectiles hit the player'''
         if self.rect.colliderect(plyr.rect):
             return True
         
 
     def killBullet(self, projectileList):
+        '''pops the enemy bullets from the list'''
         projectileList.remove(self)
         shotKill = time.time()
         return shotKill

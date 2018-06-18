@@ -51,10 +51,12 @@ class Enemy(object):
         self.rect.top += self.yMove
 
     def LRMove(self):
+        '''space invader left and right movement'''
         self.rect.left += self.setMove
 
 
     def checkMove(self, windowWidth, windowHeight):
+        '''checks if the enemy will go off the screen'''
         if self.rect.right + self.setMove >= windowWidth-20:
             return True
 
@@ -67,11 +69,13 @@ class Enemy(object):
 
 
     def invaderMovement(self):
+        '''moves the space invader and saves the last time that the invader moves'''
         self.LRMove()
         self.lastMove = time.time()
         
 
     def moveDown(self):
+        '''moves the invader down.  used after the enemy is going to hit the wall'''
         self.setMove = -self.setMove
 
         self.rect.top += 30
@@ -89,6 +93,7 @@ class Enemy(object):
             pass
 
     def shootChance(self):
+        '''enemy has 1 in 80 chance to shoot'''
         chance = random.randint(0, 80)
         if chance == 0:
             projectile = ProjectileObject.Projectile(self.surface, self.rect.centerx, self.rect.bottom, False)
@@ -97,6 +102,7 @@ class Enemy(object):
             return False
 
     def restart(self):
+        '''returns the enemy to its original position'''
         self.rect.left = self.startLeft
         self.rect.top = self.startTop
         self.xMove = self.startxMove

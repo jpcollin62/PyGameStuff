@@ -24,6 +24,7 @@ def press_button_play():
         #Uses threading to play the music over the game
         my_thread = threading.Thread(target=loop_play) 
         my_thread.start()
+
     
 def backDrop():
     '''Creates the backdrop of the interface '''
@@ -49,9 +50,15 @@ def backDrop():
 def allMove(enemyList ,level):
     '''Moves all of the enemies in a certain pattern, checks for collision'''
     oneHit = False
-    moveTime = 0.4 - level*0.05
-    if moveTime < 0.15:
+    moveTime = 0.55 - level*0.05
+    if moveTime < 0.2:
+        moveTime = 0.2
+
+    if level >= 10:#between level 10 and 14 they move every 0.15 seconds
         moveTime = 0.15
+    elif level >= 15:#after or equal to level 15 the enemies move every 0.1 seconds
+        moveTime = 0.1
+        
     
     #while there are enemies on the screen
     if len(enemyList) > 0:
@@ -86,7 +93,7 @@ def allMove(enemyList ,level):
                 return False
 
 def reset():
-    '''respawns all enemies and decreases the user's lives when the get killed'''
+    '''respawns all enemies and decreases the user's lives when the get killed.  bullets get popped out of their lists'''
     global lives, enemies, projectileList, enemyProjectiles
     
     enemies = []
@@ -140,6 +147,7 @@ pygame.font.init()
 myfont = pygame.font.SysFont("Courier New", 50)
 level = 1
 score = 0
+nextLifeScore = 10000
 lives = 3
 goodLuckOut = myfont.render("Good Luck!", False, (255,255,255))
 #makes player
@@ -252,8 +260,15 @@ while True:
             enemyProjectiles.pop(i)
             break
 
+    if score == nextLifeScore:#get a new life every 10000 score
+        lives += 1
+        nextLifeScore += 10000
+    
+
     if len(enemies) == 0: #enemies are all dead and new level
         level += 1
+        spawnEnemies()
+        pygame.time.wait(200)
 
     if playerDead == True:
         reset()
@@ -267,4 +282,7 @@ while True:
             pygame.quit()
             os._exit(1)                    
 
-import GameOver
+if level < 5:
+    import GameOver
+else:
+    import GameOverGood
