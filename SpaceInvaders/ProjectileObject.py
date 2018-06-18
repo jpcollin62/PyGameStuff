@@ -22,10 +22,7 @@ class Projectile(object):
 
     def drawEnemyProjectile(self):
         pygame.draw.rect(self.surface, (250, 100, 100), self.rect)
-
-    
         
-
     def move(self):
         
         self.rect.top += -15
@@ -47,8 +44,12 @@ class Projectile(object):
 
         return False
 
+    def checkPlayerHit(self, plyr, enemyProjectiles):
+        if self.rect.colliderect(plyr.rect):
+            return True
+        
+
     def killBullet(self, projectileList):
         projectileList.remove(self)
         shotKill = time.time()
         return shotKill
-                

@@ -1,33 +1,26 @@
 import pygame, os, time, random, PlayerObject, EnemyObject, ItemObject, ProjectileObject, background, threading
-#Begins function calling
 def outputDirect():
     ''' Outputs the click space start line '''
-    surface.blit(directions, (200,200))
+    screen.blit(directions, (200,200))
 
 def loop_play():
-    '''Loops the music track with threading '''
     is_playing = True
     start = True
     pygame.mixer.music.load("PaydayMusic.mp3")
-    #While loop for music
     while is_playing:
         pygame.mixer.music.play()
         pygame.time.wait(194800)
         
 def press_button_play():
-    ''' Checks to see if the music is playing '''
     global is_playing
     global my_thread
 
     if not is_playing:
         is_playing = True
-        #Uses threading to play the music over the game
-        my_thread = threading.Thread(target=loop_play) 
+        my_thread = threading.Thread(target=loop_play)
         my_thread.start()
     
 def backDrop():
-    '''Creates the backdrop of the interface '''
-    #Generates the string for the hud
     livesTitle = myfont.render("Lives", False, (255,255,255))
     livesPrint = myfont.render(str(lives), False, (255,255,255))
 
@@ -37,7 +30,7 @@ def backDrop():
     levelTitle = myfont.render("Level", False, (255,255,255))
     levelPrint = myfont.render(str(level), False, (255,255,255))
 
-    #Blits the string data onto the screen
+    
     surface.blit(background.image, background.rect)
     surface.blit(scoreTitle,(0,0))
     surface.blit(scorePrint, (10,50))
@@ -46,18 +39,11 @@ def backDrop():
     surface.blit(levelTitle, (WINDOW_WIDTH-200, 0))
     surface.blit(levelPrint, (WINDOW_WIDTH-150, 50))
 
-def allMove(enemyList ,level):
-    '''Moves all of the enemies in a certain pattern, checks for collision'''
+def allMove(enemyList):
     oneHit = False
-    moveTime = 0.4 - level*0.05
-    if moveTime < 0.15:
-        moveTime = 0.15
-    
-    #while there are enemies on the screen
+    playerDead = False
     if len(enemyList) > 0:
-        #If it is within the time gap
-        if time.time() - enemyList[0].lastMove >= moveTime:
-            #Causes the enemy to move
+        if time.time() - enemyList[0].lastMove >= 0.3:#moves the enemies every 0.3 secs
             for i in range (0, len(enemyList)):
                 enemyList[i].invaderMovement()
 
@@ -67,17 +53,18 @@ def allMove(enemyList ,level):
                     pass
                 else:
                     enemyProjectiles.append(enemyBullet)
-        
+                
             backDrop()
             for i in range (0, len(enemyList)):
                 surface.blit(enemyList[i].image, enemyList[i].rect)
             
 
+
             for i in range (len(enemyList)):
                 if enemyList[i].checkMove(WINDOW_WIDTH, WINDOW_HEIGHT):
                     oneHit = True
                     break
-            #If the checkmove is true moves the enemies down
+
             if oneHit == True:
                 for i in range (0, len(enemyList)):
                     enemyList[i].moveDown()
@@ -85,17 +72,6 @@ def allMove(enemyList ,level):
                         return True
                 return False
 
-def reset():
-    '''respawns all enemies and decreases the user's lives when the get killed'''
-    global lives, enemies, projectileList, enemyProjectiles
-    
-    enemies = []
-    projectileList = []
-    enemyProjectiles = []
-    player.rect.left = 450
-    player.rect.top = 800
-    lives = lives -1
-    spawnEnemies()
 
 def spawnEnemies():
     '''makes enemies and appends them to the list of enemies'''
@@ -103,7 +79,19 @@ def spawnEnemies():
         for i in range(11):
             tempEnemy = EnemyObject.Enemy(0,0, i*75 + 31, x*50, enemies, surface)
 
-
+def reset():
+    '''respawns all enemies and decreases the user's lives when the get killed'''
+    global lives, enemies
+    
+    enemies = []
+    projectileList = []
+    player.rect.left = 450
+    player.rect.top = 800
+    lives = lives -1
+    spawnEnemies()
+    
+                        
+                
 
 
 
@@ -113,18 +101,17 @@ pygame.init()
 pygame.mixer.init()
 is_playing = False
 
-#Calls the parameters
 
 WINDOW_WIDTH = 1000
 WINDOW_HEIGHT = 900
 
-#Initiates background for title screen
+
 backgroundTitle = background.Background("TitleBack.jpg", (0,0),WINDOW_WIDTH, WINDOW_HEIGHT)
 baddieImage = pygame.image.load("Enemy2.png")
 baddieImage = pygame.transform.scale(baddieImage, (300,300))
 baddieImagechange = pygame.image.load("Enemy2change.png")
 baddieImagechange = pygame.transform.scale(baddieImagechange, (300,300))
-#Calls surface
+
 surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT),0,32)
 pygame.display.set_caption("Space Invaders")
 enemies = []
@@ -132,75 +119,75 @@ items = []
 startItems = []
 projectileList = []
 enemyProjectiles = []
+enemyProjectileRemove = []
 shotGone = 1#variable for when the last shot was fired
+playerDead = False#variable for when the invaders have reached the bottom
+running = True
 
-#Initializes the background for the game
+
 background = background.Background("simpleback.jpeg", (0,0),WINDOW_WIDTH, WINDOW_HEIGHT)
 pygame.font.init()
 myfont = pygame.font.SysFont("Courier New", 50)
-level = 1
+level = 0
 score = 0
 lives = 3
 goodLuckOut = myfont.render("Good Luck!", False, (255,255,255))
+
 #makes player
 player = PlayerObject.Player()
 player.rect.left = 450
 player.rect.top = 800
 
 
-#Sets string for the title
+
 title = myfont.render("SPACE INVADERS", False, (255,255,255))
 directions = myfont.render("<Press Space to Start>", False,(255,255,255))
 
 directOn = True
-surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
+screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 titleOn = True
-
-### MainLine ###
-
 while titleOn == True:
     if is_playing == False:
         press_button_play()
-    surface.fill([0,0,0])
-    surface.blit(backgroundTitle.image, backgroundTitle.rect)
-    #Causes the click to start to flash
+    screen.fill([0,0,0])
+    screen.blit(backgroundTitle.image, backgroundTitle.rect)
     if directOn == True:
-        outputDirect() #Outputs the title strings
-        surface.blit(baddieImage, (100,400))
-        directOn = False #Causes the words to flash
+        outputDirect()
+        screen.blit(baddieImage, (100,400))
+        directOn = False
     elif directOn == False:
-        surface.blit(baddieImagechange, (100,400))
+        screen.blit(baddieImagechange, (100,400))
         directOn = True
-    surface.blit(title, (430, 560))
+    screen.blit(title, (430, 560))
     pygame.time.wait(500)
-    #When the space key is pressed, starts the game
+    
     for event in pygame.event.get():
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
-                surface.blit(goodLuckOut, (WINDOW_WIDTH-500, WINDOW_HEIGHT-200))
+                screen.blit(goodLuckOut, (WINDOW_WIDTH-500, WINDOW_HEIGHT-200))
                 titleOn = False
                 break
-
-        #If the user clicks on the exit button
         elif event.type == pygame.QUIT:
             pygame.quit()
             os._exit(1)
 
     pygame.display.update()
 
+
+
+
+
 spawnEnemies()
+
 pygame.time.wait(500)
 
-while True:
+while running:      
     backDrop()
-    
-    if is_playing == False:
-        press_button_play()
-
-    if lives == 0:
-        break
     #moves all enemies
-    playerDead = allMove(enemies, level)
+    playerDead = allMove(enemies)
+
+    if playerDead == True:
+        reset()
 
     surface.blit(player.image, player.rect)
 
@@ -210,7 +197,7 @@ while True:
 
     player.LRMovement(WINDOW_WIDTH, WINDOW_HEIGHT)
     
-    #moves the player
+    #moves player
     pressed = pygame.key.get_pressed()
     if pressed[pygame.K_SPACE] and time.time() - shotGone >= 0.1: #leaves a gap before the enxt shot can be fired
         projectile= player.shoot(surface, projectileList)
@@ -233,31 +220,22 @@ while True:
             if collisionStatus:
                 score += 50
                 shotGone = projectileList[i].killBullet(projectileList)
-                
     #moves enemy projectiles
     if len(enemyProjectiles) > 0:
         for i in range (len(enemyProjectiles)):
             enemyProjectiles[i].enemyBulletMove()
+            if enemyProjectiles[i].rect.bottom >= WINDOW_HEIGHT:
+                enemyProjectileRemove.append(i)#adds the projectile to the list of projectiles to be removed
 
-            #Checks if the projectile hits the enemy
-            collisionStatus = enemyProjectiles[i].checkPlayerHit(player, enemyProjectiles)#removes the projectile and saves the time that it hit the enemy
-            if collisionStatus:
-                pygame.time.wait(100)
-                reset()
-                pygame.time.wait(100)
-                break
+    #removes projectiles
+    if len(enemyProjectileRemove) > 0:
+        for i in range (len(enemyProjectileRemove)):
+            enemyProjectiles.pop(enemyProjectileRemove[i])
+        enemyProjectileRemove = []
 
-    for i in range (len(enemyProjectiles)):
-        if enemyProjectiles[i].rect.bottom >= WINDOW_HEIGHT:
-            enemyProjectiles.pop(i)
-            break
-
-    if len(enemies) == 0: #enemies are all dead and new level
-        level += 1
-
-    if playerDead == True:
-        reset()
-        
+    print (len(enemyProjectiles))
+    
+    #pygame.time.wait(1)
     pygame.display.update()
     
 
@@ -265,6 +243,5 @@ while True:
 
         if event.type == pygame.QUIT:#hit the x and ends game
             pygame.quit()
-            os._exit(1)                    
+            os._exit(1)
 
-import GameOver
