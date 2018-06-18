@@ -15,7 +15,7 @@ def loop_play():
         pygame.time.wait(194800)
         
 def press_button_play():
-    ''' Chesck tos see if the music is playing '''
+    ''' Checks to see if the music is playing '''
     global is_playing
     global my_thread
 
@@ -46,13 +46,17 @@ def backDrop():
     surface.blit(levelTitle, (WINDOW_WIDTH-200, 0))
     surface.blit(levelPrint, (WINDOW_WIDTH-150, 50))
 
-def allMove(enemyList):
-    '''Moves all of the enemies in a certain pattern, checks for collision '''
+def allMove(enemyList ,level):
+    '''Moves all of the enemies in a certain pattern, checks for collision'''
     oneHit = False
+    moveTime = 0.4 - level*0.05
+    if moveTime < 0.15:
+        moveTime = 0.15
+    
     #while there are enemies on the screen
     if len(enemyList) > 0:
         #If it is within the time gap
-        if time.time() - enemyList[0].lastMove >= 0.3:
+        if time.time() - enemyList[0].lastMove >= moveTime:
             #Causes the enemy to move
             for i in range (0, len(enemyList)):
                 enemyList[i].invaderMovement()
@@ -83,10 +87,11 @@ def allMove(enemyList):
 
 def reset():
     '''respawns all enemies and decreases the user's lives when the get killed'''
-    global lives, enemies
+    global lives, enemies, projectileList, enemyProjectiles
     
     enemies = []
     projectileList = []
+    enemyProjectiles = []
     player.rect.left = 450
     player.rect.top = 800
     lives = lives -1
@@ -152,7 +157,6 @@ surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 titleOn = True
 
 ### MainLine ###
-spawnEnemies()
 
 while titleOn == True:
     if is_playing == False:
@@ -184,15 +188,19 @@ while titleOn == True:
 
     pygame.display.update()
 
+spawnEnemies()
+pygame.time.wait(500)
+
 while True:
     backDrop()
+    
     if is_playing == False:
         press_button_play()
-    #moves all enemies
-    playerDead = allMove(enemies)
 
-    if playerDead == True:
-        reset()
+    if lives == 0:
+        break
+    #moves all enemies
+    playerDead = allMove(enemies, level)
 
     surface.blit(player.image, player.rect)
 
@@ -231,17 +239,25 @@ while True:
         for i in range (len(enemyProjectiles)):
             enemyProjectiles[i].enemyBulletMove()
 
+            #Checks if the projectile hits the enemy
+            collisionStatus = enemyProjectiles[i].checkPlayerHit(player, enemyProjectiles)#removes the projectile and saves the time that it hit the enemy
+            if collisionStatus:
+                pygame.time.wait(100)
+                reset()
+                pygame.time.wait(100)
+                break
+
     for i in range (len(enemyProjectiles)):
         if enemyProjectiles[i].rect.bottom >= WINDOW_HEIGHT:
             enemyProjectiles.pop(i)
             break
-            
 
-    print (len(enemyProjectiles))
-    
+    if len(enemies) == 0: #enemies are all dead and new level
+        level += 1
 
-
-    #pygame.time.wait(1)
+    if playerDead == True:
+        reset()
+        
     pygame.display.update()
     
 
@@ -249,5 +265,6 @@ while True:
 
         if event.type == pygame.QUIT:#hit the x and ends game
             pygame.quit()
-            os._exit(1)
+            os._exit(1)                    
 
+import GameOver
